@@ -12,7 +12,7 @@ try {
 	console.warn("Failed to load environment variables:", e)
 }
 
-import type { CloudUserInfo, AuthState } from "@roo-code/types"
+import type { CloudUserInfo } from "@roo-code/types"
 import { CloudService, BridgeOrchestrator } from "@roo-code/cloud"
 import { TelemetryService, PostHogTelemetryClient } from "@roo-code/telemetry"
 
@@ -53,7 +53,7 @@ let outputChannel: vscode.OutputChannel
 let extensionContext: vscode.ExtensionContext
 let cloudService: CloudService | undefined
 
-let authStateChangedHandler: ((data: { state: AuthState; previousState: AuthState }) => Promise<void>) | undefined
+let authStateChangedHandler: (() => void) | undefined
 let settingsUpdatedHandler: (() => void) | undefined
 let userInfoHandler: ((data: { userInfo: CloudUserInfo }) => Promise<void>) | undefined
 
@@ -127,30 +127,31 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	// Initialize Roo Code Cloud service.
 	const postStateListener = () => ClineProvider.getVisibleInstance()?.postStateToWebview()
-
-	authStateChangedHandler = async (data: { state: AuthState; previousState: AuthState }) => {
-		postStateListener()
-
-		if (data.state === "logged-out") {
-			try {
-				await provider.remoteControlEnabled(false)
-			} catch (error) {
-				cloudLogger(
-					`[authStateChangedHandler] remoteControlEnabled(false) failed: ${error instanceof Error ? error.message : String(error)}`,
-				)
-			}
-		}
-	}
+	authStateChangedHandler = postStateListener
 
 	settingsUpdatedHandler = async () => {
 		const userInfo = CloudService.instance.getUserInfo()
-
 		if (userInfo && CloudService.instance.cloudAPI) {
 			try {
-				provider.remoteControlEnabled(CloudService.instance.isTaskSyncEnabled())
+				const config = await CloudService.instance.cloudAPI.bridgeConfig()
+
+				const isCloudAgent =
+					typeof process.env.ROO_CODE_CLOUD_TOKEN === "string" && process.env.ROO_CODE_CLOUD_TOKEN.length > 0
+
+				const remoteControlEnabled = isCloudAgent
+					? true
+					: (CloudService.instance.getUserSettings()?.settings?.extensionBridgeEnabled ?? false)
+
+				cloudLogger(`[CloudService] Settings updated - remoteControlEnabled = ${remoteControlEnabled}`)
+
+				await BridgeOrchestrator.connectOrDisconnect(userInfo, remoteControlEnabled, {
+					...config,
+					provider,
+					sessionId: vscode.env.sessionId,
+				})
 			} catch (error) {
 				cloudLogger(
-					`[settingsUpdatedHandler] remoteControlEnabled failed: ${error instanceof Error ? error.message : String(error)}`,
+					`[CloudService] Failed to update BridgeOrchestrator on settings change: ${error instanceof Error ? error.message : String(error)}`,
 				)
 			}
 		}
@@ -162,15 +163,30 @@ export async function activate(context: vscode.ExtensionContext) {
 		postStateListener()
 
 		if (!CloudService.instance.cloudAPI) {
-			cloudLogger("[userInfoHandler] CloudAPI is not initialized")
+			cloudLogger("[CloudService] CloudAPI is not initialized")
 			return
 		}
 
 		try {
-			provider.remoteControlEnabled(CloudService.instance.isTaskSyncEnabled())
+			const config = await CloudService.instance.cloudAPI.bridgeConfig()
+
+			const isCloudAgent =
+				typeof process.env.ROO_CODE_CLOUD_TOKEN === "string" && process.env.ROO_CODE_CLOUD_TOKEN.length > 0
+
+			cloudLogger(`[CloudService] isCloudAgent = ${isCloudAgent}, socketBridgeUrl = ${config.socketBridgeUrl}`)
+
+			const remoteControlEnabled = isCloudAgent
+				? true
+				: (CloudService.instance.getUserSettings()?.settings?.extensionBridgeEnabled ?? false)
+
+			await BridgeOrchestrator.connectOrDisconnect(userInfo, remoteControlEnabled, {
+				...config,
+				provider,
+				sessionId: vscode.env.sessionId,
+			})
 		} catch (error) {
 			cloudLogger(
-				`[userInfoHandler] remoteControlEnabled failed: ${error instanceof Error ? error.message : String(error)}`,
+				`[CloudService] Failed to fetch bridgeConfig: ${error instanceof Error ? error.message : String(error)}`,
 			)
 		}
 	}
@@ -193,15 +209,6 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	// Add to subscriptions for proper cleanup on deactivate.
 	context.subscriptions.push(cloudService)
-
-	// Trigger initial cloud profile sync now that CloudService is ready
-	try {
-		await provider.initializeCloudProfileSyncWhenReady()
-	} catch (error) {
-		outputChannel.appendLine(
-			`[CloudService] Failed to initialize cloud profile sync: ${error instanceof Error ? error.message : String(error)}`,
-		)
-	}
 
 	// Finish initializing the provider.
 	TelemetryService.instance.setProvider(provider)
