@@ -1,0 +1,44 @@
+{
+  "name": "@roo-code-cloud/db",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts",
+      "require": "./src/index.ts",
+      "types": "./src/index.ts"
+    },
+    "./server": {
+      "import": "./src/server.ts",
+      "require": "./src/server.ts",
+      "types": "./src/server.ts"
+    }
+  },
+  "scripts": {
+    "lint": "eslint src --ext=ts --max-warnings=0",
+    "check-types": "tsc --noEmit",
+    "clean": "rimraf .turbo",
+    "drizzle-kit:test": "NODE_ENV=test dotenvx run -f ../../.env.test -- tsx node_modules/drizzle-kit/bin.cjs",
+    "drizzle-kit:development": "NODE_ENV=development dotenvx run -f ../../.env.development -- tsx node_modules/drizzle-kit/bin.cjs",
+    "drizzle-kit:production": "NODE_ENV=production dotenvx run -f ../../.env.production -- tsx node_modules/drizzle-kit/bin.cjs",
+    "db:generate": "pnpm drizzle-kit:development generate",
+    "db:migrate": "pnpm drizzle-kit:development migrate",
+    "db:push": "pnpm drizzle-kit:development push",
+    "db:test:push": "pnpm drizzle-kit:test push",
+    "db:production:migrate": "pnpm drizzle-kit:production migrate"
+  },
+  "dependencies": {
+    "@roo-code-cloud/env": "workspace:^",
+    "@roo-code/types": "^1.30.0",
+    "drizzle-orm": "^0.44.2",
+    "postgres": "^3.4.7",
+    "zod": "^3.25.41"
+  },
+  "devDependencies": {
+    "@roo-code/config-eslint": "workspace:^",
+    "@roo-code/config-typescript": "workspace:^",
+    "@types/node": "^24.0.3",
+    "drizzle-kit": "^0.31.1"
+  }
+}

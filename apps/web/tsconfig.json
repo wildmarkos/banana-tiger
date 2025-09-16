@@ -1,0 +1,16 @@
+{
+  "extends": "@roo-code/config-typescript/nextjs.json",
+  "compilerOptions": {
+    "types": ["vitest/globals", "@testing-library/jest-dom"],
+    "paths": { "@/*": ["./src/*"] }
+  },
+  "include": [
+    "next-env.d.ts",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    ".next/types/**/*.ts",
+    "drizzle.config.ts",
+    "vitest*.ts"
+  ],
+  "exclude": ["node_modules"]
+}

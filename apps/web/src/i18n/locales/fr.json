@@ -1,0 +1,42 @@
+{
+  "Index": {
+    "meta_title": "Roo Code Cloud",
+    "meta_description": "Gestion cloud pour Roo Code."
+  },
+  "DashboardIndex": {
+    "analytics_title": "Analytiques d'utilisation",
+    "analytics_description": "Métriques et statistiques d'utilisation de l'organisation",
+    "analytics_period_7_days": "7 derniers jours",
+    "analytics_period_30_days": "30 derniers jours",
+    "analytics_period_90_days": "90 derniers jours",
+    "analytics_tasks_started": "Tâches commencées",
+    "analytics_tasks_completed": "Tâches terminées",
+    "analytics_tokens_consumed": "Tokens consommés",
+    "analytics_llm_costs": "Coûts des modèles (USD)",
+    "analytics_active_developers": "Développeurs actifs"
+  },
+  "OrganizationProfile": {
+    "provider_whitelist": "Liste blanche des fournisseurs",
+    "cloud_settings": "Paramètres Cloud",
+    "default_parameters": "Paramètres par défaut"
+  },
+  "ProviderSettings": {
+    "title": "Fournisseurs autorisés",
+    "description": "Sélectionnez quels fournisseurs et modèles d'IA sont autorisés à être utilisés",
+    "parameters_section_title": "Paramètres par défaut",
+    "parameters_section_description": "Définissez les paramètres par défaut globaux pour les appels aux modèles d'IA"
+  },
+  "TelemetrySettings": {
+    "title": "Paramètres Cloud",
+    "description": "Configurez la manière dont les données de votre organisation sont gérées dans le cloud.",
+    "record_task_messages": "Enregistrer les messages de tâche",
+    "record_task_messages_description": "Lorsque cette option est activée, les messages et interactions de tâche seront enregistrés."
+  },
+  "Analytics": {
+    "view_mode_title": "Afficher Par",
+    "view_mode_developers": "Développeurs",
+    "view_mode_models": "Modèles",
+    "view_mode_repositories": "Dépôts",
+    "view_mode_tasks": "Tâches"
+  }
+}

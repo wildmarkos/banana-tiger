@@ -1,0 +1,45 @@
+{
+  "Index": {
+    "meta_title": "Roo Code Cloud",
+    "meta_description": "Cloud management for Roo Code."
+  },
+  "DashboardIndex": {
+    "analytics_title": "Usage Analytics",
+    "analytics_description": "Organization usage metrics and statistics",
+    "analytics_period_7_days": "Last 7 days",
+    "analytics_period_30_days": "Last 30 days",
+    "analytics_period_90_days": "Last 90 days",
+    "analytics_tasks_started": "Tasks Started",
+    "analytics_tasks_completed": "Tasks Completed",
+    "analytics_tokens_consumed": "Tokens Consumed",
+    "analytics_llm_costs": "Model Costs (USD)",
+    "analytics_active_developers": "Active Developers"
+  },
+  "OrganizationProfile": {
+    "provider_whitelist": "Provider Whitelist",
+    "cloud_settings": "Cloud Settings",
+    "default_parameters": "Default Parameters"
+  },
+  "ProviderSettings": {
+    "title": "Provider Settings",
+    "description": "Select which AI providers and models are allowed to be used",
+    "parameters_section_title": "Default Parameters",
+    "parameters_section_description": "Set global default parameters for AI model calls"
+  },
+  "TelemetrySettings": {
+    "title": "Telemetry Settings",
+    "description": "Configure how your organization's data is handled in the cloud.",
+    "record_task_messages": "Record task messages",
+    "record_task_messages_description": "When enabled task messages and interactions will be recorded."
+  },
+  "Analytics": {
+    "view_mode_title": "View By",
+    "view_mode_developers": "Developers",
+    "view_mode_models": "Models",
+    "view_mode_repositories": "Repositories",
+    "view_mode_tasks": "Tasks",
+    "chart_metric_tasks": "Tasks",
+    "chart_metric_tokens": "Tokens",
+    "chart_metric_cost": "Cost"
+  }
+}
