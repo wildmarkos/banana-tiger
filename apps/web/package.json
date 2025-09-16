@@ -64,7 +64,7 @@
     "react-hook-form": "^7.56.4",
     "react-markdown": "^10.1.0",
     "react-use": "^17.6.0",
-    "recharts": "^2.15.3",
+    "recharts": "^3.2.0",
     "rehype-sanitize": "^6.0.0",
     "remark-breaks": "^4.0.0",
     "require-in-the-middle": "^7.5.2",
