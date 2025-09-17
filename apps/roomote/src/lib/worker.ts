@@ -1,4 +1,5 @@
 import { Worker } from 'bullmq';
+import * as crypto from 'node:crypto';
 
 import { redis } from './redis';
 import { processJob } from './job';
