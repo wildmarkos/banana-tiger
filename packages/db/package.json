@@ -20,7 +20,7 @@
     "check-types": "tsc --noEmit",
     "clean": "rimraf .turbo",
     "drizzle-kit:test": "NODE_ENV=test dotenvx run -f ../../.env.test -- tsx node_modules/drizzle-kit/bin.cjs",
-    "drizzle-kit:development": "NODE_ENV=development dotenvx run -f ../../.env.development -- tsx node_modules/drizzle-kit/bin.cjs",
+    "drizzle-kit:development": "NODE_ENV=development dotenvx run -f ../../.env.local -- tsx node_modules/drizzle-kit/bin.cjs",
     "drizzle-kit:production": "NODE_ENV=production dotenvx run -f ../../.env.production -- tsx node_modules/drizzle-kit/bin.cjs",
     "db:generate": "pnpm drizzle-kit:development generate",
     "db:migrate": "pnpm drizzle-kit:development migrate",

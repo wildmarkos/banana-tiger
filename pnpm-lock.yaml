@@ -11,6 +11,7 @@ overrides:
   brace-expansion: '>=2.0.2'
   form-data: '>=4.0.4'
   bluebird: '>=3.7.2'
+  '@roo-code/types': workspace:*
 
 importers:
 
@@ -101,8 +102,8 @@ importers:
         specifier: workspace:^
         version: link:../../packages/ipc
       '@roo-code/types':
-        specifier: ^1.30.0
-        version: 1.75.0
+        specifier: workspace:*
+        version: link:../../packages/types
       bullmq:
         specifier: ^5.37.0
         version: 5.58.5
@@ -217,7 +218,7 @@ importers:
         specifier: workspace:^
         version: link:../../packages/config-typescript
       '@roo-code/types':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../../packages/types
       '@types/mocha':
         specifier: ^10.0.10
@@ -325,8 +326,8 @@ importers:
         specifier: workspace:^
         version: link:../../packages/job-auth
       '@roo-code/types':
-        specifier: ^1.30.0
-        version: 1.75.0
+        specifier: workspace:*
+        version: link:../../packages/types
       '@sentry/nextjs':
         specifier: ^9.23.0
         version: 9.46.0(@opentelemetry/context-async-hooks@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/core@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(next@15.5.3(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1)(webpack@5.101.3(esbuild@0.25.9))
@@ -575,7 +576,7 @@ importers:
         specifier: workspace:^
         version: link:../../packages/evals
       '@roo-code/types':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../../packages/types
       '@tanstack/react-query':
         specifier: ^5.69.0
@@ -672,7 +673,7 @@ importers:
         specifier: workspace:^
         version: link:../../packages/evals
       '@roo-code/types':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../../packages/types
       '@tanstack/react-query':
         specifier: ^5.79.0
@@ -782,7 +783,7 @@ importers:
   packages/cloud:
     dependencies:
       '@roo-code/types':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../types
       ioredis:
         specifier: ^5.6.1
@@ -860,8 +861,8 @@ importers:
         specifier: workspace:^
         version: link:../env
       '@roo-code/types':
-        specifier: ^1.30.0
-        version: 1.75.0
+        specifier: workspace:*
+        version: link:../types
       drizzle-orm:
         specifier: ^0.44.2
         version: 0.44.5(@libsql/client@0.15.8)(@opentelemetry/api@1.9.0)(@types/pg@8.15.5)(better-sqlite3@11.10.0)(gel@2.1.0)(postgres@3.4.7)
@@ -888,8 +889,8 @@ importers:
   packages/env:
     dependencies:
       '@roo-code/types':
-        specifier: ^1.30.0
-        version: 1.75.0
+        specifier: workspace:*
+        version: link:../types
       '@t3-oss/env-nextjs':
         specifier: ^0.13.6
         version: 0.13.8(typescript@5.8.3)(zod@3.25.76)
@@ -916,7 +917,7 @@ importers:
         specifier: workspace:^
         version: link:../ipc
       '@roo-code/types':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../types
       cmd-ts:
         specifier: ^0.13.0
@@ -980,7 +981,7 @@ importers:
   packages/ipc:
     dependencies:
       '@roo-code/types':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../types
       node-ipc:
         specifier: ^12.0.0
@@ -1033,7 +1034,7 @@ importers:
   packages/telemetry:
     dependencies:
       '@roo-code/types':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../types
       posthog-node:
         specifier: ^5.0.0
@@ -1125,7 +1126,7 @@ importers:
         specifier: workspace:^
         version: link:../packages/telemetry
       '@roo-code/types':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../packages/types
       '@vscode/codicons':
         specifier: ^0.0.36
@@ -1459,7 +1460,7 @@ importers:
         specifier: ^1.1.8
         version: 1.2.6(@types/react-dom@18.3.7(@types/react@18.3.23))(@types/react@18.3.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@roo-code/types':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../packages/types
       '@tailwindcss/vite':
         specifier: ^4.0.0
@@ -4471,9 +4472,6 @@ packages:
     resolution: {integrity: sha512-bwspbWB04XJpeElvsp+DCylKfF4trJDa2Y9Go8O6A7YLX2LIKGcNK/CYImJN6ZP4DcuOHB4Utl3iCbnR62DudA==}
     cpu: [x64]
     os: [win32]
-
-  '@roo-code/types@1.75.0':
-    resolution: {integrity: sha512-DywWHGn9NdDe+dQodE0RB1tF/q/1HK9lly/ILCU3O2hTMiQFwIsyCZGbY8LAmbC3kUtIZYOyTytJ8A94c/E2iA==}
 
   '@schummar/icu-type-parser@1.21.5':
     resolution: {integrity: sha512-bXHSaW5jRTmke9Vd0h5P7BtWZG9Znqb8gSDxZnxaGSJnGwPLDPfS+3g0BKzeWqzgZPsIVZkM7m2tbo18cm5HBw==}
@@ -14067,8 +14065,8 @@ snapshots:
 
   '@jridgewell/source-map@0.3.11':
     dependencies:
-      '@jridgewell/gen-mapping': 0.3.8
-      '@jridgewell/trace-mapping': 0.3.25
+      '@jridgewell/gen-mapping': 0.3.13
+      '@jridgewell/trace-mapping': 0.3.31
 
   '@jridgewell/sourcemap-codec@1.5.0': {}
 
@@ -16085,10 +16083,6 @@ snapshots:
 
   '@rollup/rollup-win32-x64-msvc@4.40.2':
     optional: true
-
-  '@roo-code/types@1.75.0':
-    dependencies:
-      zod: 3.25.76
 
   '@schummar/icu-type-parser@1.21.5': {}
 
@@ -24464,7 +24458,7 @@ snapshots:
 
   terser-webpack-plugin@5.3.14(esbuild@0.25.9)(webpack@5.101.3(esbuild@0.25.9)):
     dependencies:
-      '@jridgewell/trace-mapping': 0.3.25
+      '@jridgewell/trace-mapping': 0.3.31
       jest-worker: 27.5.1
       schema-utils: 4.3.2
       serialize-javascript: 6.0.2

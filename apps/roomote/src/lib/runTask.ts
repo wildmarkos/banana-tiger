@@ -112,6 +112,9 @@ export const runTask = async <T extends JobType>({
         envVars += ` ROO_CODE_CLOUD_TOKEN=${token}`;
 
         envVars += ` ROO_CODE_CLOUD_ORG_SETTINGS=${Buffer.from(JSON.stringify(ORGANIZATION_DEFAULT)).toString('base64')}`;
+
+        // Configure API URL to point to local analytics server
+        envVars += ` ROO_CODE_API_URL=http://localhost:3002`;
       } else {
         logger?.warn(`No userId found for jobId ${jobId}`);
       }
