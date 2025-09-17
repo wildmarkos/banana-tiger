@@ -15,7 +15,15 @@ export class WorkerController {
   private activeWorkers = new Set<string>();
 
   constructor() {
-    this.queue = new Queue('roomote', { connection: redis });
+    this.queue = new Queue('roomote', {
+      connection: redis,
+      defaultJobOptions: {
+        removeOnComplete: 100,
+        removeOnFail: 50,
+        attempts: 3,
+        backoff: { type: 'exponential', delay: 2000 },
+      },
+    });
 
     this.stalledJobsWorker = new Worker('roomote', undefined, {
       autorun: false,
