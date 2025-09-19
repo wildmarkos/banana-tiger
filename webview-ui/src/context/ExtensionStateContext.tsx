@@ -344,6 +344,19 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 					setCommands(message.commands ?? [])
 					break
 				}
+				case "messageCreated": {
+					const clineMessage = message.clineMessage!
+					setState((prevState) => {
+						const lastIndex = findLastIndex(prevState.clineMessages, (msg) => msg.ts === clineMessage.ts)
+						if (lastIndex !== -1) {
+							const newClineMessages = [...prevState.clineMessages]
+							newClineMessages[lastIndex] = clineMessage
+							return { ...prevState, clineMessages: newClineMessages }
+						}
+						return { ...prevState, clineMessages: [...prevState.clineMessages, clineMessage] }
+					})
+					break
+				}
 				case "messageUpdated": {
 					const clineMessage = message.clineMessage!
 					setState((prevState) => {

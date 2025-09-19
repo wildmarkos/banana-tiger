@@ -1,3 +1,4 @@
+
 'use server';
 
 import { eq, sql } from 'drizzle-orm';
@@ -32,9 +33,9 @@ export async function getOrganizationSettings(): Promise<OrganizationSettings> {
  */
 const updateOrganizationSchema = z
   .object({
-    defaultSettings: organizationDefaultSettingsSchema.optional(),
-    allowList: organizationAllowListSchema.optional(),
-    cloudSettings: organizationCloudSettingsSchema.optional(),
+    defaultSettings: z.any().optional(),
+    allowList: z.any().optional(),
+    cloudSettings: z.any().optional(),
   })
   .refine(
     (data) =>

@@ -9,6 +9,9 @@ import axios from "axios"
 import pWaitFor from "p-wait-for"
 import * as vscode from "vscode"
 
+// Small delay used for incremental message delivery to the webview
+const INCREMENTAL_SEND_DELAY_MS = 10
+
 import {
 	type TaskProviderLike,
 	type TaskProviderEvents,
@@ -921,7 +924,12 @@ export class ClineProvider
 	}
 
 	public async postMessageToWebview(message: ExtensionMessage) {
-		await this.view?.webview.postMessage(message)
+		try {
+			await this.view?.webview.postMessage(message)
+		} catch (e) {
+			const errMsg = e instanceof Error ? e.message : String(e)
+			this.log(`[postMessageToWebview] failed to post message '${message.type}': ${errMsg}`)
+		}
 	}
 
 	private async getHMRHtmlContent(webview: vscode.Webview): Promise<string> {
@@ -1614,7 +1622,25 @@ export class ClineProvider
 
 	async postStateToWebview() {
 		const state = await this.getStateToPostToWebview()
-		this.postMessageToWebview({ type: "state", state })
+
+		// Determine if we have existing messages for incremental flush
+		const currentCline = this.getCurrentTask()
+		const hasExistingMessages =
+			!!currentCline && Array.isArray(currentCline.clineMessages) && currentCline.clineMessages.length > 0
+
+		if (hasExistingMessages) {
+			// Send state without messages first for faster first paint
+			const stateWithoutMessages = { ...state, clineMessages: [] }
+			await this.postMessageToWebview({ type: "state", state: stateWithoutMessages })
+
+			// Then send messages incrementally for smooth rendering
+			for (const message of currentCline!.clineMessages) {
+				await this.postMessageToWebview({ type: "messageCreated", clineMessage: message })
+				await delay(INCREMENTAL_SEND_DELAY_MS)
+			}
+		} else {
+			await this.postMessageToWebview({ type: "state", state })
+		}
 
 		// Check MDM compliance and send user to account tab if not compliant
 		// Only redirect if there's an actual MDM policy requiring authentication

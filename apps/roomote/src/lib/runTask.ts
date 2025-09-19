@@ -88,7 +88,15 @@ export const runTask = async <T extends JobType>({
   const cancelSignal = controller.signal;
   const containerized = isFlyMachine() || isDockerContainer();
 
-  let envVars = `ROO_CODE_IPC_SOCKET_PATH=${ipcSocketPath}`;
+  const env: { [key: string]: string } = {
+    ROO_CODE_IPC_SOCKET_PATH: ipcSocketPath,
+    DONT_PROMPT_WSL_INSTALL: '1'
+  };
+
+  // Add OPENROUTER_API_KEY to environment
+  if (process.env.OPENROUTER_API_KEY) {
+    env.OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
+  }
 
   if (jobId) {
     try {
@@ -109,12 +117,12 @@ export const runTask = async <T extends JobType>({
           TIMEOUT,
         );
 
-        envVars += ` ROO_CODE_CLOUD_TOKEN=${token}`;
+        env.ROO_CODE_CLOUD_TOKEN = token;
 
-        envVars += ` ROO_CODE_CLOUD_ORG_SETTINGS=${Buffer.from(JSON.stringify(ORGANIZATION_DEFAULT)).toString('base64')}`;
+        env.ROO_CODE_CLOUD_ORG_SETTINGS = Buffer.from(JSON.stringify(ORGANIZATION_DEFAULT)).toString('base64');
 
         // Configure API URL to point to local analytics server
-        envVars += ` ROO_CODE_API_URL=http://localhost:3002`;
+        env.ROO_CODE_API_URL = 'http://localhost:3002';
       } else {
         logger?.warn(`No userId found for jobId ${jobId}`);
       }
@@ -125,8 +133,8 @@ export const runTask = async <T extends JobType>({
   }
 
   const codeCommand = containerized
-    ? `${envVars} xvfb-run --auto-servernum --server-num=1 code --wait --log trace --disable-workspace-trust --disable-gpu --disable-lcd-text --no-sandbox --user-data-dir /roo/.vscode --password-store="basic" -n ${workspacePath}`
-    : `${envVars} code --disable-workspace-trust -n ${workspacePath}`;
+    ? `xvfb-run --auto-servernum --server-num=1 code --wait --log trace --disable-workspace-trust --disable-gpu --disable-lcd-text --no-sandbox --user-data-dir /roo/.vscode --password-store="basic" -n ${workspacePath}`
+    : `code --disable-workspace-trust -n ${workspacePath}`;
 
   if (!logger) {
     logger = new Logger({
@@ -161,6 +169,7 @@ export const runTask = async <T extends JobType>({
   }
 
   const subprocess = execa({
+    env,
     shell: '/bin/bash',
     cwd: workspacePath,
     cancelSignal,
@@ -172,7 +181,7 @@ export const runTask = async <T extends JobType>({
   try {
     await pWaitFor(() => fs.existsSync(ipcSocketPath), {
       interval: 250,
-      timeout: 10_000,
+      timeout: 30_000,  // Increased from 10s to 30s for VS Code startup
     });
   } catch (_error) {
     logger.error(`IPC socket was not created within timeout: ${ipcSocketPath}`);
@@ -311,6 +320,7 @@ export const runTask = async <T extends JobType>({
         alwaysAllowWriteOutsideWorkspace: true,
         alwaysAllowWriteProtected: true,
         openRouterApiKey: process.env.OPENROUTER_API_KEY,
+        openRouterImageApiKey: process.env.OPENROUTER_API_KEY,
         lastShownAnnouncementId: 'jun-17-2025-3-21',
         ...settings,
         mode,

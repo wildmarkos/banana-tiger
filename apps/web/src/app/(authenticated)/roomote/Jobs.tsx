@@ -1,7 +1,9 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import { getTaskById } from '@/actions/analytics';
+import { useState, useCallback, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useAuth } from '@clerk/nextjs';
+import { getTaskById } from '@/actions/analytics/events';
 import { TaskModal } from '../usage/TaskModal';
 import { useQuery } from '@tanstack/react-query';
 import { formatDistanceToNow } from 'date-fns';
@@ -19,6 +21,7 @@ import {
   DialogTitle,
 } from '@/components/ui';
 import { fetchRoomoteJobs } from '@/actions/roomote';
+import { CloudJobButton } from '@/components/roomote/CloudJobButton';
 
 import { STATUSES, LABELS } from './constants';
 import { getJobTitle } from './utils';
@@ -30,10 +33,16 @@ interface JobsProps {
 }
 
 export function Jobs({ userId }: JobsProps) {
+  const { orgId, userId: authUserId } = useAuth();
+  const searchParams = useSearchParams();
   const [modal, setModal] = useState<'create' | 'configure'>();
   const [selectedTask, setSelectedTask] = useState<any | null>(null);
   const [isLoadingTask, setIsLoadingTask] = useState(false);
 
+  // Get taskId from search params (from CloudJobButton redirect)
+  const taskIdFromParams = searchParams.get('taskId');
+
+  // Handle job click (original logic from remote banana-tiger-42)
   const handleJobClick = useCallback(async (job: any) => {
     try {
       setIsLoadingTask(true);
@@ -52,6 +61,31 @@ export function Jobs({ userId }: JobsProps) {
       setIsLoadingTask(false);
     }
   }, []);
+
+  // Handle auto-opening from URL params (CloudJobButton workflow)
+  useEffect(() => {
+    const loadTaskFromParams = async () => {
+      if (taskIdFromParams && orgId !== undefined && authUserId !== undefined) {
+        try {
+          setIsLoadingTask(true);
+          const task = await getTaskById({
+            taskId: taskIdFromParams,
+            orgId,
+            userId: authUserId,
+          });
+          if (task) {
+            setSelectedTask(task);
+          }
+        } catch (error) {
+          console.error('Failed to load task from URL params:', error);
+        } finally {
+          setIsLoadingTask(false);
+        }
+      }
+    };
+
+    loadTaskFromParams();
+  }, [taskIdFromParams, orgId, authUserId]);
 
   const query = useQuery({
     queryKey: [QueryKey.FetchRoomoteJobs, userId],
@@ -147,7 +181,7 @@ export function Jobs({ userId }: JobsProps) {
         ) : (
           <div className="border rounded-lg overflow-hidden">
             <div className="bg-muted/50 px-4 py-3 border-b">
-              <div className="grid grid-cols-12 gap-4 text-sm font-medium text-muted-foreground">
+              <div className="grid grid-cols-13 gap-4 text-sm font-medium text-muted-foreground">
                 <div className="col-span-1">ID</div>
                 <div className="col-span-2">Type</div>
                 <div className="col-span-3">Title</div>
@@ -155,6 +189,7 @@ export function Jobs({ userId }: JobsProps) {
                 <div className="col-span-2">Status</div>
                 <div className="col-span-1">Created</div>
                 <div className="col-span-1">Duration</div>
+                <div className="col-span-1">Actions</div>
               </div>
             </div>
 
@@ -177,7 +212,7 @@ export function Jobs({ userId }: JobsProps) {
                     className="px-4 py-3 hover:bg-muted/30 transition-colors cursor-pointer"
                     onClick={() => handleJobClick(job)}
                   >
-                    <div className="grid grid-cols-12 gap-4 items-center text-sm">
+                    <div className="grid grid-cols-13 gap-4 items-center text-sm">
                       <div className="col-span-1 font-mono text-xs">
                         #{job.id}
                       </div>
@@ -246,6 +281,10 @@ export function Jobs({ userId }: JobsProps) {
                       <div className="col-span-1 text-muted-foreground text-xs">
                         {duration ? `${duration}s` : '-'}
                       </div>
+
+                      <div className="col-span-1">
+                        <CloudJobButton job={job} disabled={false} />
+                      </div>
                     </div>
                   </div>
                 );
@@ -254,6 +293,20 @@ export function Jobs({ userId }: JobsProps) {
           </div>
         )}
       </div>
+
+      {selectedTask && (
+        <TaskModal
+          task={selectedTask}
+          open={!!selectedTask}
+          onClose={() => setSelectedTask(null)}
+        />
+      )}
+
+      {isLoadingTask && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <Loader2 className="animate-spin h-8 w-8 text-white" />
+        </div>
+      )}
 
       <Dialog
         open={modal === 'create'}

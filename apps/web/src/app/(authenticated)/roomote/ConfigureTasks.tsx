@@ -59,7 +59,7 @@ export function ConfigureTasks({ onSuccess }: ConfigureTasksProps) {
         toast.error(result.error);
       }
     },
-    onError: () => toast.error('An unexpected error occurred.'),
+    onError: () => { toast.error('An unexpected error occurred.'); },
   });
 
   const modes = { ...(query.data || {}), ...localChanges };

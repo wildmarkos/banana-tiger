@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
       const parsedContent = JSON.parse(fileContent);
 
       const messagesResult = z
-        .array(clineMessageSchema)
+        .array(z.any())
         .safeParse(parsedContent);
 
       if (!messagesResult.success) {

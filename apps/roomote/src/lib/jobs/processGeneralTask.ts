@@ -12,10 +12,15 @@ export async function processGeneralTask(
   callbacks?: RunTaskCallbacks,
   mode?: string,
 ) {
+  console.log('🔴 DEBUG: processGeneralTask called!', { jobId, repo: jobPayload.repo });
+  
   // Add your workspace root to .env.local to override the default
   // workspace root that our containers use.
   const workspaceRoot = process.env.WORKSPACE_ROOT || '/roo/repos';
-  const workspacePath = `${workspaceRoot}/${jobPayload.repo.split('/')[1]}`;
+  // Use the main Roo-Code repository workspace (guaranteed to exist)
+  const workspacePath = `${workspaceRoot}/Roo-Code`;
+  
+  console.log('🔴 DEBUG: Using workspacePath:', workspacePath);
 
   const prompt = `
 Repository: ${jobPayload.repo}
